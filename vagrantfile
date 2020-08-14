@@ -1,0 +1,28 @@
+# -*- mode: ruby -*-
+
+VAGRANTFILE_API_VERSION = "2"
+SOURCE_DIR = "vm_configurations/"
+YUM_REQUIREMENT_FILE = "yum_requirement.txt"
+PIP_REQUIREMENT_FILE = "pip_requirement.txt"
+
+YUM_REQUIREMENT_PATH = "/tmp/" + SOURCE_DIR + YUM_REQUIREMENT_FILE
+PIP_REQUIREMENT_PATH = "/tmp/" + SOURCE_DIR + PIP_REQUIREMENT_FILE
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.box = "centos/8"
+  config.vm.box_version = "1905.1"
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.name = "WorkVM"
+  end
+  
+  config.vm.provision "file" do |file|
+    file.source = SOURCE_DIR
+    file.destination = "/tmp/"
+  end
+
+  config.vm.provision "shell" do |shell|
+    shell.path =  SOURCE_DIR + "main.sh"
+    shell.args = YUM_REQUIREMENT_PATH + " " + PIP_REQUIREMENT_PATH
+  end
+end
